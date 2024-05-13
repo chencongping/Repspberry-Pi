@@ -67,8 +67,10 @@ while True:
                 cacheSpeed = speed
                 speed = 0
             pwm_motor(speed *10)
-        print(speed)
-        pwm_motor(speed *10)
+        elif value == 74:
+            speed = 9
+            pwm_motor(speed *10)
+
 
 
 

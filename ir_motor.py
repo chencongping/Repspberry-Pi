@@ -7,6 +7,7 @@ from machine import Pin, PWM
 pin = Pin(5, Pin.IN, Pin.PULL_UP)
 
 speed = 5
+cacheSpeed = 5
 # 初始化电机小风扇
 fan = PWM(Pin(13))
 fan.freq(1000) # 设置频率
@@ -28,9 +29,9 @@ while True:
     #读取遥控器数据
     value = Ir.Getir()
     if value != None:
-        speed=value
-        print(value)
-        if value == 12:
+        if value == 22:
+            speed = 0
+        elif value == 12:
             speed = 1
         elif value == 24:
             speed = 2
@@ -48,8 +49,14 @@ while True:
             speed = 8
         elif value == 74:
             speed = 9
-        else:
-            speed = 0
+        elif value == 69:
+            # 开关启停
+            if speed == 0:
+                speed = cacheSpeed
+            else:
+                cacheSpeed = speed
+                speed = 0
+        print(speed)
         pwm_motor(speed *10)
 
 

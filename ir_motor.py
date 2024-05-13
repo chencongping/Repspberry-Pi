@@ -31,24 +31,34 @@ while True:
     if value != None:
         if value == 22:
             speed = 0
+            pwm_motor(speed *10)
         elif value == 12:
             speed = 1
+            pwm_motor(speed *10)
         elif value == 24:
             speed = 2
+            pwm_motor(speed *10)
         elif value == 94:
             speed = 3
+            pwm_motor(speed *10)
         elif value == 8:
             speed = 4
+            pwm_motor(speed *10)
         elif value == 28:
             speed = 5
+            pwm_motor(speed *10)
         elif value == 90:
             speed = 6
+            pwm_motor(speed *10)
         elif value == 66:
             speed = 7
+            pwm_motor(speed *10)
         elif value == 82:
             speed = 8
+            pwm_motor(speed *10)
         elif value == 74:
             speed = 9
+            pwm_motor(speed *10)
         elif value == 69:
             # 开关启停
             if speed == 0:
@@ -56,6 +66,7 @@ while True:
             else:
                 cacheSpeed = speed
                 speed = 0
+            pwm_motor(speed *10)
         print(speed)
         pwm_motor(speed *10)
 

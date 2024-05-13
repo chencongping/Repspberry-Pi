@@ -6,22 +6,12 @@ from machine import Pin, PWM
 #配置红外接收引脚
 pin = Pin(5, Pin.IN, Pin.PULL_UP)
 
-speed = 30
-
-#配置红外接收库
-Ir = ir(pin)
-
-while True:
-    #读取遥控器数据
-    value = Ir.Getir()
-    if value != None:
-        speed=value
-
-
+speed = 5
 # 初始化电机小风扇
 fan = PWM(Pin(13))
 fan.freq(1000) # 设置频率
-
+#配置红外接收库
+Ir = ir(pin)
 # 数值重映射
 def my_map(x, in_min, in_max, out_min, out_max):
     return int((x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min)
@@ -33,8 +23,35 @@ def pwm_motor(speed):
         return
     pulse = my_map(speed, 0, 100, 0, 65535)
     fan.duty_u16(pulse)
-
+    
 while True:
-    pwm_motor(speed)
+    #读取遥控器数据
+    value = Ir.Getir()
+    if value != None:
+        speed=value
+        print(value)
+        if value == 12:
+            speed = 1
+        elif value == 24:
+            speed = 2
+        elif value == 94:
+            speed = 3
+        elif value == 8:
+            speed = 4
+        elif value == 28:
+            speed = 5
+        elif value == 90:
+            speed = 6
+        elif value == 66:
+            speed = 7
+        elif value == 82:
+            speed = 8
+        elif value == 74:
+            speed = 9
+        else:
+            speed = 0
+        pwm_motor(speed *10)
+
+
 
 

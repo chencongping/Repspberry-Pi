@@ -93,6 +93,10 @@ def motor_control():
         elif value == 74:
             speed = 9
             pwm_motor(speed *10)
+    else:
+        speed = 3
+        pwm_motor(speed *10)
+    
 #初始化温湿度引脚
 pin = Pin(22, Pin.OUT)
 #初始化温湿度库
@@ -103,14 +107,19 @@ while True:
     if detect_someone() == True:
         print("human")
         led_on()
-        motor_control()
+        oled.fill(0)
         oled.text("T.:%dC" % dht11.temperature, 0, 12)
+        utime.sleep(.5)
         oled.text("H.:%d%%" % dht11.humidity, 70, 12)
         oled.show()
-        utime.sleep(.5)
+        motor_control()
+        utime.sleep(5)
     else:
         print("leave")
         led_off()
         pwm_motor(0)
+        oled.fill(0)
+        oled.text("leave",0, 12)
+        oled.show()
         utime.sleep(.5)
 

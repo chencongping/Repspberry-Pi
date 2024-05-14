@@ -100,10 +100,10 @@ dht11 = DHT11(pin)
 
 
 while True:
-    motor_control()
     if detect_someone() == True:
         print("human")
         led_on()
+        motor_control()
         oled.text("T.:%dC" % dht11.temperature, 0, 12)
         oled.text("H.:%d%%" % dht11.humidity, 70, 12)
         oled.show()

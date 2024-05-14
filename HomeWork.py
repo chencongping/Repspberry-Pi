@@ -48,48 +48,50 @@ def pwm_motor(speed):
     pulse = my_map(speed, 0, 100, 0, 65535)
     fan.duty_u16(pulse)
 
-def motor_control():
+def motor_control(content):
     #读取遥控器数据
     value = Ir.Getir()
     if value != None:
+        print(value)
         if value == 22:
-            speed = 0
-            pwm_motor(speed *10)
+            content.speed = 0
+            pwm_motor(content.speed *10)
         elif value == 12:
-            speed = 1
-            pwm_motor(speed *10)
+            content.speed = 1
+            pwm_motor(content.speed *10)
         elif value == 24:
-            speed = 2
-            pwm_motor(speed *10)
+            content.speed = 2
+            pwm_motor(content.speed *10)
         elif value == 94:
-            speed = 3
-            pwm_motor(speed *10)
+            content.speed = 3
+            pwm_motor(content.speed *10)
         elif value == 8:
-            speed = 4
-            pwm_motor(speed *10)
+            content.speed = 4
+            pwm_motor(content.speed *10)
         elif value == 28:
-            speed = 5
-            pwm_motor(speed *10)
+            content.speed = 5
+            pwm_motor(content.speed *10)
         elif value == 90:
-            speed = 6
-            pwm_motor(speed *10)
+            content.speed = 6
+            pwm_motor(content.speed *10)
         elif value == 66:
-            speed = 7
-            pwm_motor(speed *10)
+            content.speed = 7
+            pwm_motor(content.speed *10)
         elif value == 82:
-            speed = 8
-            pwm_motor(speed *10)
+            content.speed = 8
+            pwm_motor(content.speed *10)
         elif value == 74:
-            speed = 9
-            pwm_motor(speed *10)
+            content.speed = 9
+            pwm_motor(content.speed *10)
         elif value == 69:
             # 开关启停
-            if speed == 0:
-                speed = cacheSpeed
+            if content.speed == 0:
+                content.speed = content.cacheSpeed
             else:
-                cacheSpeed = speed
-                speed = 0
-            pwm_motor(speed *10)
+                content.cacheSpeed = content.speed
+                content.speed = 0
+            pwm_motor(content.speed *10)
+        print(content.speed)
             
     
 #初始化温湿度引脚
@@ -97,7 +99,9 @@ pin = Pin(22, Pin.OUT)
 #初始化温湿度库
 dht11 = DHT11(pin)
 
-class TextContent():
+class HomeWorkContent():
+    speed = 5
+    cacheSpeed = 5
     def __init__(self,  start, width):
         self.start = start
         self.width = width
@@ -117,21 +121,25 @@ def scrollShow(textContent):
     #print("text: %d %d %s" % (textContent.start, textContent.width, textContent.text))
     textContent.oled.show()
     
-content = TextContent(0, 16)
-sleepTimes = 0
+content = HomeWorkContent(0, 16)
+ledSleepTimes = 0
+ledSleepTimesMax = 5000
+dht11SleepTime = 0
+dht11SleepTimeMax = 300
 while True:
     if detect_someone() != True:
-        if sleepTimes == 5:
-            sleepTimes = 0
+        if ledSleepTimes == ledSleepTimesMax:
+            ledSleepTimes = 0
             print("human")
             led_on() 
-            motor_control()
-        sleepTimes = sleepTimes + 1
-        utime.sleep(.5)
-        
-        text = "temperature:"+ str(dht11.temperature) +"C humidity:" + str(dht11.humidity)
-        content.setText(oled, text)
-        scrollShow(content)
+        motor_control(content)
+        ledSleepTimes = ledSleepTimes + 1
+        dht11SleepTime = dht11SleepTime + 1
+        if dht11SleepTime == dht11SleepTimeMax:
+            dht11SleepTime = 0
+            text = "temperature:"+ str(dht11.temperature) +"C humidity:" + str(dht11.humidity)
+            content.setText(oled, text)
+            scrollShow(content)
     else:
         print("leave")
         led_off()

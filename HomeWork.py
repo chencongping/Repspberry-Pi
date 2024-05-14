@@ -1,6 +1,8 @@
 from machine import Pin, I2C, PWM
 from color import color
 from ir import ir
+from dht11 import DHT11
+from ssd1306 import SSD1306_I2C
 import utime
 import random
 
@@ -14,7 +16,6 @@ def detect_someone():
 
 #####oled显示
 i2c=I2C(0, scl=Pin(21), sda=Pin(20), freq=100000)
-from ssd1306 import SSD1306_I2C
 oled = SSD1306_I2C(128, 32, i2c)
 
 # 打开主板自带的LED灯
@@ -92,19 +93,24 @@ def motor_control():
         elif value == 74:
             speed = 9
             pwm_motor(speed *10)
+#初始化温湿度引脚
+pin = Pin(22, Pin.OUT)
+#初始化温湿度库
+dht11 = DHT11(pin)
+
 
 while True:
+    motor_control()
     if detect_someone() == True:
-        led_on()
         print("human")
-        oled.text('Welcome Home!', 0, 12)
+        led_on()
+        oled.text("T.:%dC" % dht11.temperature, 0, 12)
+        oled.text("H.:%d%%" % dht11.humidity, 70, 12)
         oled.show()
-        motor_control()
-        #pwm_motor(50)
-        #utime.sleep(10)
-    #else:
-        #led_off()
-        #print("nothing")
-        #pwm_motor(0)
-        #utime.sleep(3)
+        utime.sleep(.5)
+    else:
+        print("leave")
+        led_off()
+        pwm_motor(0)
+        utime.sleep(.5)
 

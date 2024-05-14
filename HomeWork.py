@@ -102,18 +102,41 @@ pin = Pin(22, Pin.OUT)
 #初始化温湿度库
 dht11 = DHT11(pin)
 
-
+class TextContent():
+    def __init__(self,  start, width):
+        self.start = start
+        self.width = width
+        
+    def setText(self, oled, text):
+        self.oled = oled
+        self.text = text
+    
+        
+def scrollShow(textContent):
+    oled.fill(0)
+    if textContent.start + textContent.width >= len(textContent.text) -1 :
+        textContent.start = 0
+    showText = textContent.text[textContent.start: textContent.start + textContent.width: 1]
+    textContent.start = textContent.start + 1
+    textContent.oled.text(showText, 0, 16, 32)
+    #print("text: %d %d %s" % (textContent.start, textContent.width, textContent.text))
+    textContent.oled.show()
+    
+content = TextContent(0, 16)
+sleepTimes = 0
 while True:
-    if detect_someone() == True:
-        print("human")
-        led_on()
-        oled.fill(0)
-        oled.text("T.:%dC" % dht11.temperature, 0, 12)
+    if detect_someone() != True:
+        if sleepTimes == 5:
+            sleepTimes = 0
+            print("human")
+            led_on() 
+            motor_control()
+        sleepTimes = sleepTimes + 1
         utime.sleep(.5)
-        oled.text("H.:%d%%" % dht11.humidity, 70, 12)
-        oled.show()
-        motor_control()
-        utime.sleep(5)
+        
+        text = "temperature:"+ str(dht11.temperature) +"C humidity:" + str(dht11.humidity)
+        content.setText(oled, text)
+        scrollShow(content)
     else:
         print("leave")
         led_off()

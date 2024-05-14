@@ -90,12 +90,7 @@ def motor_control():
                 cacheSpeed = speed
                 speed = 0
             pwm_motor(speed *10)
-        elif value == 74:
-            speed = 9
-            pwm_motor(speed *10)
-    else:
-        speed = 3
-        pwm_motor(speed *10)
+            
     
 #初始化温湿度引脚
 pin = Pin(22, Pin.OUT)
